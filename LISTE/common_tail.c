@@ -46,7 +46,7 @@ const Item* CommonTail(const Item* i1, const Item* i2) {
 			break;
 		}
 
-		if (ElemCompare(ListGetHeadValue(tmp1), ListGetHeadValue(tmp2)) == 0) {
+		if (ListGetHeadValue(tmp1) == ListGetHeadValue(tmp2)) {
 			flag = true;
 		}
 		else {
