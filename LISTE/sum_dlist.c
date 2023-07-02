@@ -1,6 +1,6 @@
 #include "sum_dlist.h"
 
-void DListCpy(Item* ris, const Item* i) {
+Item* DListCpy(Item* ris, const Item* i) {
 
 	const Item* tmp = i;
 	ElemType e;
@@ -8,33 +8,23 @@ void DListCpy(Item* ris, const Item* i) {
 	while (!DListIsEmpty(tmp)) {
 		e = ElemCopy(DListGetHeadValue(tmp));
 		ris = DListInsertBack(ris, &e);
+		tmp = DListGetTail(tmp);
 	}
+
+	return ris;
 }
 
-ElemType Sum(const Item* i1, const Item* i2) {
+size_t DListGetLen(const Item* i) {
 
-	ElemType n1 = 0, n2 = 0;
-	const Item* tmp1 = i1;
-	const Item* tmp2 = i2;
+	size_t len = 0;
+	const Item* tmp = i;
 
-	while (true) {
-		n1 += *DListGetHeadValue(tmp1);
-		tmp1 = DListGetTail(tmp1);
-		if (DListIsEmpty(tmp1)) {
-			break;
-		}
-		n1 *= 10;
-	}
-	while (!DListIsEmpty(tmp2)) {
-		n2 += *DListGetHeadValue(tmp2);
-		tmp2 = DListGetTail(tmp2);
-		if (DListIsEmpty(tmp2)) {
-			break;
-		}
-		n2 *= 10;
+	while (!DListIsEmpty(tmp)) {
+		len++;
+		tmp = DListGetTail(tmp);
 	}
 
-	return  n1 + n2;
+	return len;
 }
 
 Item* DListSum(const Item* i1, const Item* i2) {
@@ -46,20 +36,105 @@ Item* DListSum(const Item* i1, const Item* i2) {
 	}
 
 	else if (i1 == NULL) {
-		DListCpy(ris, i2);
+		ris = DListCpy(ris, i2);
 		return ris;
 	}
 	else if (i2 == NULL) {
-		DListCpy(ris, i1);
+		ris = DListCpy(ris, i1);
 		return ris;
 	}
 
-	ElemType sum = Sum(i1, i2);
+	const Item* tmp1 = i1;
+	const Item* tmp2 = i2;
+	bool rip = false;
 
-	while (sum != 0) {
-		ElemType element = sum % 10;
-		sum /= 10;
-		ris = DListInsertHead(&element, ris);
+	size_t len1 = DListGetLen(tmp1), len2 = DListGetLen(tmp2);
+	if (len1 >= len2) {
+		while (!DListIsEmpty(tmp2)) {
+			ElemType sum = *DListGetHeadValue(tmp1) + *DListGetHeadValue(tmp2);
+			if (rip == true) {
+				sum++;
+				rip = false;
+			}
+			if (sum > 9) {
+				rip = true;
+				sum = sum % 10;
+			}
+			else {
+				ris = DListInsertBack(ris, &sum);
+				tmp1 = DListGetTail(tmp1);
+				tmp2 = DListGetTail(tmp2);
+				continue;
+			}
+			ris = DListInsertHead(&sum, ris);
+			tmp1 = DListGetTail(tmp1);
+			tmp2 = DListGetTail(tmp2);
+		}
+		while (!DListIsEmpty(tmp1)) {
+			ElemType sum = *DListGetHeadValue(tmp1);
+			if (rip == true) {
+				sum++;
+				rip = false;
+			}
+			if (sum > 9) {
+				rip = true;
+				sum = sum % 10;
+			}
+			else {
+				ris = DListInsertBack(ris, &sum);
+				tmp1 = DListGetTail(tmp1);
+				tmp2 = DListGetTail(tmp2);
+				continue;
+			}
+			ris = DListInsertHead(&sum, ris);
+			tmp1 = DListGetTail(tmp1);
+		}
+	}
+	else {
+		while (!DListIsEmpty(tmp1)) {
+			ElemType sum = *DListGetHeadValue(tmp1) + *DListGetHeadValue(tmp2);
+			if (rip == true) {
+				sum++;
+				rip = false;
+			}
+			if (sum > 9) {
+				rip = true;
+				sum = sum % 10;
+			}
+			else {
+				ris = DListInsertBack(ris, &sum);
+				tmp1 = DListGetTail(tmp1);
+				tmp2 = DListGetTail(tmp2);
+				continue;
+			}
+			ris = DListInsertHead(&sum, ris);
+			tmp1 = DListGetTail(tmp1);
+			tmp2 = DListGetTail(tmp2);
+		}
+		while (!DListIsEmpty(tmp2)) {
+			ElemType sum = *DListGetHeadValue(tmp2);
+			if (rip == true) {
+				sum++;
+				rip = false;
+			}
+			if (sum > 9) {
+				rip = true;
+				sum = sum % 10;
+			}
+			else {
+				ris = DListInsertBack(ris, &sum);
+				tmp1 = DListGetTail(tmp1);
+				tmp2 = DListGetTail(tmp2);
+				continue;
+			}
+			ris = DListInsertHead(&sum, ris);
+			tmp2 = DListGetTail(tmp2);
+		}
+	}
+
+	if (rip == true) {
+		ElemType sum = 1;
+		ris = DListInsertHead(&sum, ris);
 	}
 
 	return ris;

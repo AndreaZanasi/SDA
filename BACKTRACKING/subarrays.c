@@ -11,7 +11,7 @@ void OptimalSubarrayRec(const int* v, size_t n, bool* vcurr, int* bst,
 		for (size_t j = 0; j < n; j++) {
 			if (vcurr[j] == true) {
 				taken++;
-				if (taken != cnt && vcurr[j + 1] == false) {
+				if (taken != (int)cnt && vcurr[j + 1] == false) {
 					return;
 				}
 				sum += v[j];
@@ -43,6 +43,7 @@ int OptimalSubarray(const int* v, size_t n) {
 	OptimalSubarrayRec(v, n, vcurr, &bst, 0, 0);
 
 	if (bst <= 0) {
+		free(vcurr);
 		return 0;
 	}
 
